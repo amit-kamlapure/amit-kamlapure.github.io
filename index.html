@@ -21,7 +21,8 @@ html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:18px;line-height:1.45;-webkit-font-smoothing:antialiased}
 canvas#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 main{position:relative;z-index:1}
-section{min-height:100vh;min-height:100svh;padding:clamp(64px,11vh,120px) var(--gx) 110px;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;justify-content:center}
+section{min-height:100vh;min-height:100svh;padding:clamp(64px,11vh,120px) var(--gx) 110px;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;justify-content:flex-start}
+#intro{justify-content:center}
 .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--soft);display:flex;align-items:center;gap:14px;margin-bottom:clamp(24px,5vh,56px)}
 .eyebrow b{color:var(--accent);font-weight:500}
 .eyebrow i{display:block;width:44px;height:1px;background:var(--faint)}
@@ -100,8 +101,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .shot figcaption{font-family:var(--mono);font-size:11.5px;color:#bdb9af;padding:9px 12px;letter-spacing:.04em}
 
 /* this section holds the most; it sizes to the screen's height so it never runs under the bottom bar */
-#pramanyx{padding-top:clamp(36px,7vh,120px);padding-bottom:84px}
-#pramanyx .eyebrow{margin-bottom:clamp(14px,3vh,56px)}
+#pramanyx{padding-bottom:64px}
 #pramanyx h2{font-size:clamp(36px,min(5vw,7.6vh),72px)}
 #pramanyx .lede{font-size:clamp(17px,min(1.55vw,2.5vh),23px);margin-top:12px!important}
 #pramanyx .chips{margin:clamp(12px,2vh,22px) 0}
