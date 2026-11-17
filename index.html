@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amit Kamlapure · Data & AI</title>
+<meta name="description" content="Amit Kamlapure. More than a decade of turning ambiguous business questions into the data models, shared definitions and tooling that organisations decide on. Senior Data Manager at Flaconi, founder of Pramanyx.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ECEAE3; --card:#F8F7F2; --ink:#171717; --soft:#55534d; --faint:#8d8a82;
+  --line:rgba(23,23,23,.16); --accent:#F0492A;
+  --sans:"Inter Tight",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --gx:clamp(22px,11.5vw,200px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:18px;line-height:1.45;-webkit-font-smoothing:antialiased}
+canvas#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+main{position:relative;z-index:1}
+section{min-height:100vh;min-height:100svh;padding:clamp(64px,11vh,120px) var(--gx) 110px;scroll-snap-align:start;scroll-snap-stop:always;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--soft);display:flex;align-items:center;gap:14px;margin-bottom:clamp(24px,5vh,56px)}
+.eyebrow b{color:var(--accent);font-weight:500}
+.eyebrow i{display:block;width:44px;height:1px;background:var(--faint)}
+h1,h2{font-weight:700;letter-spacing:-.045em;line-height:.98;margin:0}
+h1{font-size:clamp(44px,6.6vw,108px)}
+h2{font-size:clamp(36px,5vw,72px);margin-bottom:clamp(22px,4vh,44px)}
+.accent{color:var(--accent)}
+p{margin:0}
+.lede{font-size:clamp(18px,1.55vw,23px);color:var(--soft);max-width:44ch;margin-top:28px}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* hero */
+.tag{display:inline-block;align-self:flex-start;border:1.5px solid var(--ink);padding:8px 13px;font-family:var(--mono);font-size:12px;letter-spacing:.24em;text-transform:uppercase;margin-bottom:34px}
+.tag b{font-weight:700;font-size:14px}
+.tag{transition:background .2s ease,color .2s ease;text-decoration:none;cursor:pointer}
+.tag:hover{background:var(--ink);color:var(--paper)}
+.meta{display:flex;flex-wrap:wrap;gap:10px 34px;margin-top:40px;font-family:var(--mono);font-size:14px;color:var(--soft)}
+.meta span::before{content:"◆";color:var(--accent);margin-right:10px;font-size:11px}
+.rule{width:min(400px,60%);height:2px;background:var(--accent);margin-top:clamp(40px,9vh,96px)}
+
+/* number cards */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.card{background:var(--card);border:1px solid var(--line);box-shadow:0 26px 40px -30px rgba(0,0,0,.35);padding:26px 26px 28px;text-align:left;min-height:clamp(260px,44vh,400px);display:flex;flex-direction:column;border-radius:0;transition:transform .2s ease, box-shadow .2s ease}
+.card:hover{transform:translateY(-4px);box-shadow:0 34px 44px -30px rgba(0,0,0,.42)}
+.card .k{font-family:var(--mono);font-size:13px;color:var(--accent);display:flex;justify-content:space-between}
+.card .k em{font-style:normal;color:var(--faint)}
+.card .n{font-size:clamp(46px,4.7vw,80px);font-weight:800;letter-spacing:-.05em;color:var(--accent);line-height:1;margin-top:auto}
+.card .n.w{font-size:clamp(38px,3.6vw,62px);font-weight:700;letter-spacing:-.045em}
+.card .n small{display:block;font-size:18px;font-weight:500;color:var(--soft);letter-spacing:0;margin-top:8px;min-height:1.4em}
+.card .t{font-size:clamp(19px,1.5vw,24px);font-weight:600;letter-spacing:-.02em;line-height:1.15;margin-top:auto;padding-top:24px}
+.card .src{display:none;font-size:16px;color:var(--soft);margin-top:auto;padding-top:20px}
+.card .src b{display:block;font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);margin-bottom:8px}
+.card[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.card[aria-pressed="true"] .t{display:none}
+.card[aria-pressed="true"] .src{display:block;color:#cfccc3}
+.card[aria-pressed="true"] .src b{color:var(--paper)}
+.hint{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.08em;margin-top:22px}
+
+/* picker (how I work + path) */
+.pick{display:grid;grid-template-columns:minmax(260px,5fr) 7fr;gap:clamp(24px,4vw,64px);align-items:start}
+.pick [role=tablist]{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.pick [role=tab]{background:none;border:0;border-bottom:1px solid var(--line);padding:15px 4px;text-align:left;display:flex;gap:16px;align-items:baseline;font-size:clamp(18px,1.6vw,24px);font-weight:600;letter-spacing:-.02em;color:var(--faint);transition:color .15s, padding .15s}
+.pick [role=tab] span{font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:.08em;flex:none;min-width:5.5em}
+.pick [role=tab]:hover{color:var(--ink)}
+.pick [role=tab][aria-selected=true]{color:var(--ink);padding-left:14px;box-shadow:inset 3px 0 0 var(--accent)}
+.pick [role=tab][aria-selected=true] span{color:var(--accent)}
+.panel{background:var(--card);border:1px solid var(--line);box-shadow:0 26px 40px -30px rgba(0,0,0,.35);padding:clamp(24px,2.6vw,40px)}
+.panel[hidden]{display:none}
+.panel .where{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.panel h3{font-size:clamp(24px,2.2vw,34px);font-weight:700;letter-spacing:-.03em;line-height:1.08;margin:0 0 16px}
+.panel p{color:var(--soft);max-width:60ch}
+.panel ul{margin:0;padding:0;list-style:none}
+.panel li{padding:11px 0 11px 22px;border-top:1px solid var(--line);color:var(--soft);position:relative}
+.panel li::before{content:"";position:absolute;left:0;top:21px;width:8px;height:8px;background:var(--accent)}
+.panel li b,.panel p b{color:var(--ink);font-weight:600}
+.result{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);font-weight:600;letter-spacing:-.01em;color:var(--ink)!important}
+.result::before{content:"→ ";color:var(--accent)}
+
+/* pramanyx */
+.split{display:grid;grid-template-columns:5fr 7fr;gap:clamp(28px,4vw,64px);align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0}
+.chip{border:1.5px solid var(--ink);padding:6px 11px;font-family:var(--mono);font-size:12.5px;background:var(--card)}
+.chip.hot{border-color:var(--accent);color:var(--accent)}
+.points{list-style:none;margin:8px 0 0;padding:0}
+.points li{padding:12px 0 12px 22px;border-top:1px solid var(--line);position:relative;color:var(--soft)}
+.points li::before{content:"";position:absolute;left:0;top:22px;width:8px;height:8px;background:var(--accent)}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn{display:inline-block;text-decoration:none;font-family:var(--mono);font-size:13px;letter-spacing:.06em;padding:13px 18px;border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);transition:background .15s,color .15s}
+.btn:hover{background:var(--accent);border-color:var(--accent)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.shot{margin:0;border:1px solid var(--ink);border-top:3px solid var(--accent);box-shadow:0 40px 60px -36px rgba(0,0,0,.5);background:#111}
+.shot img{display:block;width:100%;height:auto}
+.shot figcaption{font-family:var(--mono);font-size:11.5px;color:#bdb9af;padding:9px 12px;letter-spacing:.04em}
+
+/* skills */
+.skills{display:grid;grid-template-columns:repeat(3,1fr);gap:0 clamp(24px,3vw,48px)}
+.skills div{border-top:1px solid var(--line);padding:18px 0 26px}
+.skills h3{font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:0 0 12px}
+.skills p{color:var(--soft);line-height:1.6}
+.skills p b{color:var(--ink);font-weight:600}
+
+/* interests */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+.tile{background:var(--card);border:1px solid var(--line);padding:26px 28px 28px;box-shadow:0 26px 40px -30px rgba(0,0,0,.35)}
+.tile .k{font-family:var(--mono);font-size:13px;color:var(--accent)}
+.tile h3{font-size:clamp(22px,2vw,30px);font-weight:700;letter-spacing:-.03em;margin:14px 0 8px;line-height:1.1}
+.tile p{color:var(--soft);font-size:17px}
+
+/* contact */
+.contact a.big{display:block;font-size:clamp(19px,5.4vw,56px);font-weight:700;letter-spacing:-.04em;text-decoration:none;line-height:1.15;overflow-wrap:anywhere}
+.contact a.big:hover{color:var(--accent)}
+.scratch{position:relative;width:min(100%,660px);height:clamp(64px,8vw,92px);border:1.5px solid var(--ink);background:var(--card);box-shadow:0 26px 40px -30px rgba(0,0,0,.35)}
+.scratch canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.scratch #scCoat{touch-action:none;cursor:crosshair}
+.scratch.done{border:0;background:none;box-shadow:none;height:auto;width:auto}
+.back{font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--soft);margin-top:clamp(28px,6vh,56px)}
+.back a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:4px}
+.back a:hover{color:var(--accent)}
+.edu{display:grid;grid-template-columns:repeat(2,1fr);gap:0 48px;margin-top:clamp(28px,6vh,60px);max-width:1000px}
+.edu div{border-top:1px solid var(--line);padding:13px 0;color:var(--soft);font-size:16px}
+.edu b{color:var(--ink);font-weight:600;display:block}
+
+/* bottom bar */
+nav.bar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;align-items:center;gap:18px;padding:12px 22px;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);background:linear-gradient(to top,var(--paper) 55%,rgba(236,234,227,0))}
+nav.bar .pos b{color:var(--accent);font-weight:500}
+nav.bar .ticks{flex:1;display:flex;gap:6px;align-items:center}
+nav.bar .ticks button{flex:1;height:18px;background:none;border:0;padding:0;position:relative}
+nav.bar .ticks button::after{content:"";position:absolute;left:0;right:0;top:8px;height:2px;background:var(--line);transition:background .2s}
+nav.bar .ticks button:hover::after{background:var(--ink)}
+nav.bar .ticks button.on::after{background:var(--accent)}
+nav.bar .arrow{border:1px solid var(--line);background:var(--card);width:34px;height:28px;font-size:13px;line-height:1}
+nav.bar .arrow:hover{border-color:var(--ink)}
+
+@media (max-width:1000px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .card{min-height:230px}
+  .pick,.split{grid-template-columns:1fr}
+  .skills{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  html{scroll-snap-type:none}
+  body{font-size:17px}
+  section{padding-top:56px;padding-bottom:90px}
+  .cards,.tiles,.skills,.edu{grid-template-columns:1fr}
+  .card{min-height:190px}
+  nav.bar .title{display:none}
+  .pick [role=tab] span{min-width:4.6em}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card{transition:none}}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+
+<main>
+
+<!-- 01 -->
+<section id="intro" data-title="Intro">
+  <a class="tag" href="#contact" title="Get in touch"><b>Amit Kamlapure</b> · Data &amp; AI</a>
+  <h1>Unclear problem in.<br><span class="accent">Working system out.</span></h1>
+  <p class="lede">More than a decade of turning ambiguous business questions into the data models, shared definitions and tooling that organisations make their decisions on. Now building Pramanyx, an open-source agentic data intelligence platform.</p>
+  <div class="meta">
+    <span>Berlin</span>
+    <span>Senior Data Manager, Flaconi</span>
+    <span>Founder, Pramanyx</span>
+  </div>
+  <div class="rule"></div>
+</section>
+
+<!-- 02 -->
+<section id="numbers" data-title="Who I am">
+  <div class="eyebrow"><b>02</b><i></i>Who I am</div>
+  <h2>One person, <span class="accent">four jobs.</span></h2>
+  <div class="cards">
+    <button class="card" aria-pressed="false">
+      <span class="k">01 · Hands-on <em>+</em></span>
+      <span class="n w">Analyst</span>
+      <span class="t">Leading the work has never meant leaving it.</span>
+      <span class="src"><b>What that means</b>I would rather read the data than a summary of it. However senior the role, I stay close enough to the detail to know when a number is wrong.</span>
+    </button>
+    <button class="card" aria-pressed="false">
+      <span class="k">02 · Ownership <em>+</em></span>
+      <span class="n w">Founder</span>
+      <span class="t">I have carried a business, not only measured one.</span>
+      <span class="src"><b>What that means</b>I have priced products, negotiated with suppliers and lived with the results. I treat every decision as if the money were mine, because once it was.</span>
+    </button>
+    <button class="card" aria-pressed="false">
+      <span class="k">03 · People <em>+</em></span>
+      <span class="n w">Leader</span>
+      <span class="t">I bring teams onto a single version of the numbers.</span>
+      <span class="src"><b>What that means</b>I lead by making things clear: what a number means, who owns it, what we are deciding. People follow clarity more readily than authority.</span>
+    </button>
+    <button class="card" aria-pressed="false">
+      <span class="k">04 · Systems <em>+</em></span>
+      <span class="n w">Builder</span>
+      <span class="t">I leave systems behind, not only answers.</span>
+      <span class="src"><b>What that means</b>When I solve the same problem twice, I build the thing that solves it. I measure my work by what keeps running after I have stepped away.</span>
+    </button>
+  </div>
+  <p class="hint">Click a card to see what that means.</p>
+</section>
+
+<!-- 03 -->
+<section id="how" data-title="How I work">
+  <div class="eyebrow"><b>03</b><i></i>How I work</div>
+  <h2>Five principles <span class="accent">I work by.</span></h2>
+  <div class="pick">
+    <div role="tablist" aria-label="How I work">
+      <button role="tab"><span>01</span>Own it until it ships</button>
+      <button role="tab"><span>02</span>Leave something that lasts</button>
+      <button role="tab"><span>03</span>Align without authority</button>
+      <button role="tab"><span>04</span>Stay close to the code</button>
+      <button role="tab"><span>05</span>Decide like an owner</button>
+    </div>
+    <div>
+      <div class="panel" role="tabpanel">
+        <div class="where">Ownership</div>
+        <h3>One owner, from the question to the answer.</h3>
+        <p>I do not hand a problem over at the edge of my role. I take it from the first vague question through the definition, the model and the report someone finally acts on, because the gaps between owners are where most work quietly fails.</p>
+        <p class="result">How I run analytics across several commercial domains today.</p>
+      </div>
+      <div class="panel" role="tabpanel" hidden>
+        <div class="where">Durability</div>
+        <h3>Systems that hold without me in the room.</h3>
+        <p>An answer helps once. A shared definition, an automated report or a team that can answer its own questions keeps helping. I judge my work by what still runs when I am no longer the one running it.</p>
+        <p class="result">A company-wide data dictionary, automated reporting, data literacy programmes.</p>
+      </div>
+      <div class="panel" role="tabpanel" hidden>
+        <div class="where">Alignment</div>
+        <h3>A definition holds only when everyone has agreed to it.</h3>
+        <p>Most of what matters in data sits between teams, where nobody is in charge. I do not get there by mandate. I get there by making the shared definition clearer and more useful than each team's private one.</p>
+        <p class="result">One set of numbers shared by Product, Sales and Finance.</p>
+      </div>
+      <div class="panel" role="tabpanel" hidden>
+        <div class="where">Craft</div>
+        <h3>Accountable for the direction, still writing the SQL.</h3>
+        <p>As a Senior Data Manager I answer for where the work is going, not only for whether it is delivered. I cannot make a sound call on a trade-off I do not understand, so I stay hands-on in the queries, the models and the architecture discussions, and I build my own platform across the full stack.</p>
+      </div>
+      <div class="panel" role="tabpanel" hidden>
+        <div class="where">Judgement</div>
+        <h3>I have answered for a P&amp;L of my own.</h3>
+        <p>As a founder there was no job description and no one to hand a decision to. I learned to decide on the evidence available, commit to it, and change course when the facts change.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 -->
+<section id="path" data-title="Path">
+  <div class="eyebrow"><b>04</b><i></i>Path</div>
+  <h2>Six stops, and what each <span class="accent">taught me.</span></h2>
+  <div class="pick">
+    <div role="tablist" aria-label="Career path">
+      <button role="tab"><span>2026 –</span>Pramanyx</button>
+      <button role="tab"><span>2022 –</span>Flaconi</button>
+      <button role="tab"><span>2021</span>Mphasis</button>
+      <button role="tab"><span>2019 – 21</span>Tata Technologies, PMO</button>
+      <button role="tab"><span>2016 – 18</span>Kamlapure Apparels</button>
+      <button role="tab"><span>2013 – 16</span>Tata Technologies, Data</button>
+    </div>
+    <div>
+      <div class="panel" role="tabpanel">
+        <div class="where">Founder &amp; builder</div>
+        <h3>An answer should be checkable, not just believable.</h3>
+        <p>I am building the platform I wanted for a decade: one that explores the data on its own and cites the evidence behind every finding.</p>
+      </div>
+      <div class="panel" role="tabpanel" hidden>
+        <div class="where">Senior Data Manager, Analytics &amp; BI · Berlin</div>
+        <h3>A number has to mean the same thing everywhere it appears.</h3>
+        <p>Here I learned to own the whole cycle, from definition to decision, and to build teams that can answer their own questions.</p>
+      </div>
+      <div class="panel" role="tabpanel" hidden>
+        <div class="where">Senior Analyst, Reporting &amp; Data · Pune</div>
+        <h3>Trust in a report is earned upstream.</h3>
+        <p>Working across several enterprise clients, I saw that people believe a dashboard only once the data feeding it has been put right.</p>
+      </div>
+      <div class="panel" role="tabpanel" hidden>
+        <div class="where">Executive, PMO &amp; Analytics · Pune</div>
+        <h3>Decisions are only as good as the definitions under them.</h3>
+        <p>Reporting across many teams taught me to get agreement on what is being measured before measuring it.</p>
+      </div>
+      <div class="panel" role="tabpanel" hidden>
+        <div class="where">Founder · Pune</div>
+        <h3>Margin and stock stop being report categories when they are yours.</h3>
+        <p>Running my own apparel business is where I learned how commercial decisions are really made: with my own pricing, suppliers and working capital.</p>
+      </div>
+      <div class="panel" role="tabpanel" hidden>
+        <div class="where">Business Analyst, Data · Pune</div>
+        <h3>Fix the cause, not the report.</h3>
+        <p>My first years taught me that a problem which keeps recurring downstream almost always starts upstream.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 -->
+<section id="pramanyx" data-title="Pramanyx">
+  <div class="eyebrow"><b>05</b><i></i>What I am building</div>
+  <div class="split">
+    <div>
+      <h2 style="margin-bottom:0">Pramanyx</h2>
+      <p class="lede" style="margin-top:18px">An Agentic Data Intelligence platform that explores your warehouse on its own and shows the evidence behind every number.</p>
+      <div class="chips">
+        <span class="chip hot">Open source</span><span class="chip">Apache-2.0</span><span class="chip">Alpha</span><span class="chip">Runs locally</span>
+      </div>
+      <ul class="points">
+        <li>Explores a connected warehouse unprompted and learns how the business works.</li>
+        <li>Proposes metrics into a governed semantic layer, where a person reviews and approves them.</li>
+        <li>Every figure cites its query, and deterministic checks run on each one before it is shown.</li>
+      </ul>
+      <p style="margin-top:18px;color:var(--soft)">I built it after a decade spent on the same three problems: slow answers, inconsistent definitions, and analysis that never reaches the people who need it.</p>
+      <div class="btns">
+        <a class="btn" href="https://github.com/amit-kamlapure/pramanyx" target="_blank" rel="noopener">View on GitHub ↗</a>
+        <a class="btn ghost" href="https://amit-kamlapure.github.io/pramanyx/how-it-works.html" target="_blank" rel="noopener">How it works ↗</a>
+      </div>
+    </div>
+    <figure class="shot">
+      <img src="assets/pramanyx.jpg" alt="Pramanyx screens: the Briefing, the Business Atlas and the Semantic Layer" width="1800" height="1013" loading="lazy">
+      <figcaption>The running product, on synthetic data.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 06 -->
+<section id="skills" data-title="Skills">
+  <div class="eyebrow"><b>06</b><i></i>Skills</div>
+  <h2>What I bring.</h2>
+  <div class="skills">
+    <div><h3>AI</h3><p><b>LLM and agent orchestration</b> · Harness engineering · Natural-language question answering over warehouse data · Anomaly detection</p></div>
+    <div><h3>Governance</h3><p><b>Data Dictionary and catalog</b> · Data quality frameworks · Lineage and ownership · Master data standards · Root-cause analysis</p></div>
+    <div><h3>Leading</h3><p><b>Team management and mentoring</b> · Analytics roadmap ownership · Stakeholder and executive communication · Agile (Scrum, Kanban)</p></div>
+    <div><h3>Analytics</h3><p><b>Attribution modelling · Customer segmentation</b> · Dimensional and semantic modelling · KPI definition · Funnel and retention analysis · A/B testing</p></div>
+    <div><h3>Data stack</h3><p><b>Advanced SQL · ELT pipeline design</b> · Transformation as code · Workflow orchestration · Lakehouse and warehouse architecture · Python automation</p></div>
+    <div><h3>BI and reporting</h3><p><b>Tableau · Power BI · Apache Superset</b> · Looker · Executive dashboard design · Self-service enablement</p></div>
+  </div>
+</section>
+
+<!-- 07 -->
+<section id="interests" data-title="Interests">
+  <div class="eyebrow"><b>07</b><i></i>Interests</div>
+  <h2>What holds my attention.</h2>
+  <div class="tiles">
+    <div class="tile"><div class="k">01</div><h3>Applied AI across industries</h3><p>How the same methods take a different shape in retail, aviation or manufacturing. Pramanyx ships draft ontology maps for ten industries.</p></div>
+    <div class="tile"><div class="k">02</div><h3>Agentic frameworks</h3><p>What makes an agent dependable: the harness around the model, the guards on its output, and the record of what it did.</p></div>
+    <div class="tile"><div class="k">03</div><h3>Agentic data intelligence</h3><p>Analysis that begins before anyone asks, and that can be verified instead of taken on trust.</p></div>
+    <div class="tile"><div class="k">04</div><h3>Modern data structures</h3><p>Lakehouses, semantic layers and ontologies: shaping data so that people and agents read it the same way.</p></div>
+  </div>
+</section>
+
+<!-- 08 -->
+<section id="contact" class="contact" data-title="Contact">
+  <div class="eyebrow"><b>08</b><i></i>Contact</div>
+  <h2>Give me the problem<br><span class="accent">nobody has defined yet.</span></h2>
+  <div class="scratch" id="scratch">
+    <canvas id="scText" aria-hidden="true"></canvas>
+    <canvas id="scCoat" tabindex="0" role="button" aria-label="Scratch this strip to reveal my email address, or press Enter"></canvas>
+  </div>
+  <p class="hint" id="scHint" style="margin:12px 0 0">Scratch the strip to get my email.</p>
+  <div class="btns">
+    <a class="btn" href="https://www.linkedin.com/in/amitkamlapure" target="_blank" rel="noopener">LinkedIn ↗</a>
+    <a class="btn ghost" href="https://github.com/amit-kamlapure" target="_blank" rel="noopener">GitHub ↗</a>
+  </div>
+  <p class="back">Landed directly here? <a href="#intro">Get to know me first ↑</a></p>
+</section>
+
+</main>
+
+<nav class="bar" aria-label="Sections">
+  <span class="pos"><b id="cur">01</b> / <span id="tot">08</span></span>
+  <span class="title" id="curTitle">Intro</span>
+  <span class="ticks" id="ticks"></span>
+  <button class="arrow" id="prev" aria-label="Previous section">←</button>
+  <button class="arrow" id="next" aria-label="Next section">→</button>
+</nav>
+
+<script>
+(function(){
+  var secs=[].slice.call(document.querySelectorAll('section'));
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- cards ---- */
+  document.querySelectorAll('.card').forEach(function(c){
+    c.addEventListener('click',function(){
+      var on=c.getAttribute('aria-pressed')==='true';
+      c.setAttribute('aria-pressed',on?'false':'true');
+      c.querySelector('.k em').textContent=on?'+':'–';
+    });
+  });
+
+  /* ---- pickers ---- */
+  document.querySelectorAll('.pick').forEach(function(p,pi){
+    var tabs=[].slice.call(p.querySelectorAll('[role=tab]'));
+    var panels=[].slice.call(p.querySelectorAll('[role=tabpanel]'));
+    function sel(i,focus){
+      tabs.forEach(function(t,j){
+        t.setAttribute('aria-selected',j===i);t.tabIndex=j===i?0:-1;
+        panels[j].hidden=j!==i;
+      });
+      if(focus)tabs[i].focus();
+    }
+    tabs.forEach(function(t,i){
+      t.id='t'+pi+'-'+i;panels[i].setAttribute('aria-labelledby',t.id);
+      t.addEventListener('click',function(){sel(i)});
+      t.addEventListener('keydown',function(e){
+        if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+          e.preventDefault();e.stopPropagation();
+          sel((i+(e.key==='ArrowDown'?1:tabs.length-1))%tabs.length,true);
+        }
+      });
+    });
+    sel(0);
+  });
+
+
+  /* ---- scratch-off email: the address is not in the page source or the DOM until scratched ---- */
+  (function(){
+    var box=document.getElementById('scratch'),tx=document.getElementById('scText'),ct=document.getElementById('scCoat'),hint=document.getElementById('scHint');
+    var K=[116, 118, 106, 53, 115, 112, 104, 116, 110, 71, 108, 121, 124, 119, 104, 115, 116, 104, 114, 53, 123, 112, 116, 104],done=false,last=null,g,w,h;
+    function addr(){return K.map(function(n){return String.fromCharCode(n-7)}).reverse().join('')}
+    function build(){
+      if(done)return;
+      var d=Math.min(devicePixelRatio||1,2);w=box.clientWidth;h=box.clientHeight;
+      [tx,ct].forEach(function(c){c.width=w*d;c.height=h*d});
+      var t=tx.getContext('2d');t.setTransform(d,0,0,d,0,0);
+      var fs=h*.46;t.font='700 '+fs+'px "Inter Tight",sans-serif';
+      var mw=t.measureText(addr()).width;if(mw>w-28){fs*=(w-28)/mw;t.font='700 '+fs+'px "Inter Tight",sans-serif'}
+      t.fillStyle='#171717';t.textBaseline='middle';t.fillText(addr(),14,h/2+1);
+      g=ct.getContext('2d');g.setTransform(d,0,0,d,0,0);g.globalCompositeOperation='source-over';
+      g.fillStyle='#171717';g.fillRect(0,0,w,h);
+      g.strokeStyle='rgba(236,234,227,.10)';g.lineWidth=1;
+      for(var x=-h;x<w;x+=9){g.beginPath();g.moveTo(x,h);g.lineTo(x+h,0);g.stroke()}
+      g.fillStyle='#ECEAE3';g.font='500 '+Math.max(10,Math.min(13,w/34))+'px "JetBrains Mono",monospace';g.textBaseline='middle';g.textAlign='center';
+      g.fillText('◆  S C R A T C H   T O   R E V E A L  ◆',w/2,h/2);
+      g.globalCompositeOperation='destination-out';g.strokeStyle='#000';g.lineCap='round';g.lineJoin='round';g.lineWidth=Math.max(26,h*.42);
+    }
+    function reveal(){
+      if(done)return;done=true;
+      var a=document.createElement('a');a.className='big';a.textContent=addr();a.href='mai'+'lto:'+addr();
+      box.innerHTML='';box.classList.add('done');box.appendChild(a);
+      hint.textContent='Click the address to write to me.';
+    }
+    function cleared(){
+      var d=ct.getContext('2d').getImageData(0,0,ct.width,ct.height).data,n=0,c=0;
+      for(var i=3;i<d.length;i+=4*37){n++;if(d[i]<40)c++}
+      return c/n;
+    }
+    function pt(e){var r=ct.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+    function stroke(e){
+      var p=pt(e);g.beginPath();g.moveTo(last?last[0]:p[0]-.1,last?last[1]:p[1]);g.lineTo(p[0],p[1]);g.stroke();last=p;
+    }
+    ct.addEventListener('pointerdown',function(e){ct.setPointerCapture(e.pointerId);last=null;stroke(e)});
+    ct.addEventListener('pointermove',function(e){if(e.buttons||e.pointerType==='touch'){if(last)stroke(e)}});
+    ct.addEventListener('pointerup',function(){last=null;if(cleared()>.5)reveal()});
+    ct.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();reveal()}});
+    addEventListener('resize',build);
+    (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(build);
+    build();
+  })();
+
+  /* ---- bottom bar ---- */
+  var ticks=document.getElementById('ticks'),cur=document.getElementById('cur'),ttl=document.getElementById('curTitle');
+  document.getElementById('tot').textContent=('0'+secs.length).slice(-2);
+  var active=0;
+  function go(i){
+    i=Math.max(0,Math.min(secs.length-1,i));
+    secs[i].scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+  }
+  secs.forEach(function(s,i){
+    var b=document.createElement('button');
+    b.setAttribute('aria-label',s.dataset.title);b.title=s.dataset.title;
+    b.addEventListener('click',function(){go(i)});
+    ticks.appendChild(b);
+  });
+  function mark(){
+    var mid=scrollY+innerHeight*0.4,a=0;
+    secs.forEach(function(s,i){if(s.offsetTop<=mid)a=i});
+    active=a;
+    cur.textContent=('0'+(a+1)).slice(-2);ttl.textContent=secs[a].dataset.title;
+    [].forEach.call(ticks.children,function(b,i){b.classList.toggle('on',i<=a)});
+  }
+  document.getElementById('prev').addEventListener('click',function(){go(active-1)});
+  document.getElementById('next').addEventListener('click',function(){go(active+1)});
+  addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    var plain=e.target===document.body||e.target===document.documentElement;
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key==='ArrowDown'||(e.key===' '&&plain&&!e.shiftKey)){e.preventDefault();step(1)}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'||e.key==='ArrowUp'||(e.key===' '&&plain&&e.shiftKey)){e.preventDefault();step(-1)}
+    else if(e.key==='Home'){e.preventDefault();go(0)}
+    else if(e.key==='End'){e.preventDefault();go(secs.length-1)}
+  });
+
+  /* ---- one gesture, one section ---- */
+  function paged(){return innerWidth>640}
+  function inside(dir){            /* a section taller than the screen scrolls inside itself first */
+    var sc=secs[active],top=sc.offsetTop,bot=top+sc.offsetHeight;
+    return dir>0?scrollY+innerHeight<bot-4:scrollY>top+4;
+  }
+  function step(dir){
+    if(paged()&&inside(dir)){scrollBy({top:dir*innerHeight*.8,behavior:reduce?'auto':'smooth'});return}
+    go(active+dir);
+  }
+  var lockedAt=0,lastWheel=0,locked=false;
+  addEventListener('wheel',function(e){
+    if(!paged()||e.ctrlKey||Math.abs(e.deltaX)>Math.abs(e.deltaY))return;
+    var now=performance.now(),dir=e.deltaY>0?1:-1;
+    if(locked){                     /* swallow the rest of the same swipe, momentum included */
+      e.preventDefault();
+      if(now-lastWheel>160&&now-lockedAt>650)locked=false;else{lastWheel=now;return}
+    }
+    lastWheel=now;
+    if(inside(dir))return;
+    e.preventDefault();
+    if(Math.abs(e.deltaY)<4)return;
+    locked=true;lockedAt=now;go(active+dir);
+  },{passive:false});
+
+  /* ---- wireframe solids ---- */
+  var cv=document.getElementById('bg'),cx=cv.getContext('2d'),W,H,D;
+  var PHI=(1+Math.sqrt(5))/2;
+  function cyc(a,b,c){return[[a,b,c],[c,a,b],[b,c,a]]}
+  function signs(list){
+    var out=[];
+    list.forEach(function(v){
+      for(var m=0;m<8;m++){
+        var p=[v[0]*(m&1?-1:1),v[1]*(m&2?-1:1),v[2]*(m&4?-1:1)];
+        if(!out.some(function(q){return Math.abs(q[0]-p[0])+Math.abs(q[1]-p[1])+Math.abs(q[2]-p[2])<1e-6}))out.push(p);
+      }
+    });
+    return out;
+  }
+  function solid(v){
+    var r=Math.hypot(v[0][0],v[0][1],v[0][2]);
+    v=v.map(function(p){return[p[0]/r,p[1]/r,p[2]/r]});
+    var min=9,e=[],i,j,d;
+    for(i=0;i<v.length;i++)for(j=i+1;j<v.length;j++){d=Math.hypot(v[i][0]-v[j][0],v[i][1]-v[j][1],v[i][2]-v[j][2]);if(d<min)min=d}
+    for(i=0;i<v.length;i++)for(j=i+1;j<v.length;j++){d=Math.hypot(v[i][0]-v[j][0],v[i][1]-v[j][1],v[i][2]-v[j][2]);if(d<min*1.01)e.push([i,j])}
+    return{v:v,e:e};
+  }
+  var S={
+    tet:solid([[1,1,1],[1,-1,-1],[-1,1,-1],[-1,-1,1]]),
+    cube:solid(signs([[1,1,1]])),
+    oct:solid(signs([[1,0,0],[0,1,0],[0,0,1]])),
+    ico:solid(signs(cyc(0,1,PHI))),
+    dod:solid(signs([[1,1,1]].concat(cyc(0,1/PHI,PHI))))
+  };
+  /* [section, x 0..1, y 0..1, radius (fraction of min side), solid, style] */
+  var shapes=[
+    [0,.855,.50,.21,'ico','bold'],[0,.47,.20,.06,'cube','ghost'],[0,.57,.24,.05,'tet','ink'],[0,.64,.26,.022,'dod','accent'],
+    [0,.07,.80,.045,'ico','ghost'],[0,.75,.86,.03,'tet','ghost'],[0,.70,.08,.07,'dod','ghost'],
+    [1,.06,.42,.07,'dod','ghost'],[1,.63,.24,.07,'dod','ghost'],[1,.46,.26,.028,'cube','accent'],[1,.17,.22,.09,'tet','ghost'],[1,.60,.93,.025,'tet','ghost'],
+    [2,.93,.20,.07,'oct','ghost'],[2,.05,.75,.06,'cube','ghost'],[2,.70,.13,.025,'ico','accent'],
+    [3,.92,.78,.08,'ico','ghost'],[3,.04,.25,.05,'tet','ghost'],[3,.78,.12,.03,'oct','accent'],
+    [4,.06,.14,.09,'tet','accent'],[4,.95,.86,.08,'dod','ghost'],[4,.40,.93,.03,'cube','ghost'],
+    [5,.93,.22,.09,'cube','ghost'],[5,.05,.86,.05,'oct','ghost'],[5,.72,.12,.028,'dod','accent'],
+    [6,.94,.60,.08,'dod','ghost'],[6,.04,.20,.06,'ico','ghost'],[6,.62,.10,.028,'tet','accent'],
+    [7,.88,.42,.13,'dod','bold'],[7,.05,.84,.05,'cube','ghost'],[7,.66,.16,.03,'oct','accent']
+  ].map(function(a,i){return{s:a[0],x:a[1],y:a[2],r:a[3],g:S[a[4]],k:a[5],p:i*1.7,w:.00007+(i%5)*.00002}});
+  var mx=0,my=0;
+  addEventListener('pointermove',function(e){mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5});
+  function size(){
+    D=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+    cv.width=W*D;cv.height=H*D;cx.setTransform(D,0,0,D,0,0);
+  }
+  function draw(t){
+    cx.clearRect(0,0,W,H);
+    var m=Math.min(W,H),small=W<760,sy=scrollY;
+    shapes.forEach(function(o){
+      if(small&&o.k!=='ghost'&&o.k!=='accent')return;       /* big solids would sit on the text */
+      var sec=secs[o.s],R=o.r*m*(small?.8:1);
+      var px=o.x*W,py=sec.offsetTop+o.y*sec.offsetHeight-sy;
+      if(py<-R*2||py>H+R*2)return;
+      var a=o.p+t*o.w+mx*.6,b=o.p*.6+t*o.w*.7+my*.6;
+      var ca=Math.cos(a),sa=Math.sin(a),cb=Math.cos(b),sb=Math.sin(b);
+      var pts=o.g.v.map(function(v){
+        var x=v[0]*ca+v[2]*sa,z=-v[0]*sa+v[2]*ca,y=v[1]*cb-z*sb;z=v[1]*sb+z*cb;
+        var f=1+z*.18;return[px+x*R*f,py+y*R*f,z];
+      });
+      var bold=o.k==='bold',ink=bold||o.k==='ink';
+      o.g.e.forEach(function(e){
+        var p=pts[e[0]],q=pts[e[1]],back=(p[2]+q[2])/2<-.12;
+        cx.beginPath();cx.moveTo(p[0],p[1]);cx.lineTo(q[0],q[1]);
+        cx.setLineDash(ink&&back?[4,5]:[]);
+        cx.lineWidth=ink&&!back?1.5:1;
+        cx.strokeStyle=o.k==='accent'?'rgba(240,73,42,.55)':ink?(back?'rgba(23,23,23,.28)':'rgba(23,23,23,.82)'):'rgba(23,23,23,.15)';
+        cx.stroke();
+      });
+      if(ink){
+        cx.fillStyle='#F0492A';
+        pts.forEach(function(p){if(p[2]>-.12){cx.fillRect(p[0]-3,p[1]-3,6,6)}});
+      }
+    });
+    cx.setLineDash([]);
+  }
+  var t0=performance.now();
+  function loop(t){draw(t-t0+40000);requestAnimationFrame(loop)}
+  size();mark();
+  addEventListener('resize',function(){size();mark();if(reduce)draw(40000)});
+  addEventListener('scroll',function(){mark();if(reduce)draw(40000)},{passive:true});
+  if(reduce)draw(40000);else requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
