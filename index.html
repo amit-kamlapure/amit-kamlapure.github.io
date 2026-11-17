@@ -99,6 +99,17 @@ button{font:inherit;color:inherit;cursor:pointer}
 .shot img{display:block;width:100%;height:auto}
 .shot figcaption{font-family:var(--mono);font-size:11.5px;color:#bdb9af;padding:9px 12px;letter-spacing:.04em}
 
+/* this section holds the most; it sizes to the screen's height so it never runs under the bottom bar */
+#pramanyx{padding-top:clamp(36px,7vh,120px);padding-bottom:84px}
+#pramanyx .eyebrow{margin-bottom:clamp(14px,3vh,56px)}
+#pramanyx h2{font-size:clamp(36px,min(5vw,7.6vh),72px)}
+#pramanyx .lede{font-size:clamp(17px,min(1.55vw,2.5vh),23px);margin-top:12px!important}
+#pramanyx .chips{margin:clamp(12px,2vh,22px) 0}
+#pramanyx .points li{padding:clamp(7px,1.2vh,12px) 0 clamp(7px,1.2vh,12px) 22px}
+#pramanyx .points li::before{top:calc(clamp(7px,1.2vh,12px) + 10px)}
+#pramanyx .why{margin-top:clamp(10px,1.8vh,18px);color:var(--soft)}
+#pramanyx .btns{margin-top:clamp(14px,2.4vh,26px)}
+@media (max-height:820px) and (min-width:1001px){#pramanyx .points li,#pramanyx .why{font-size:16px}}
 /* skills */
 .skills{display:grid;grid-template-columns:repeat(3,1fr);gap:0 clamp(24px,3vw,48px)}
 .skills div{border-top:1px solid var(--line);padding:18px 0 26px}
@@ -315,7 +326,7 @@ nav.bar .arrow:hover{border-color:var(--ink)}
         <li>Proposes metrics into a governed semantic layer, where a person reviews and approves them.</li>
         <li>Every figure cites its query, and deterministic checks run on each one before it is shown.</li>
       </ul>
-      <p style="margin-top:18px;color:var(--soft)">I built it after a decade spent on the same three problems: slow answers, inconsistent definitions, and analysis that never reaches the people who need it.</p>
+      <p class="why">I built it after a decade spent on the same three problems: slow answers, inconsistent definitions, and analysis that never reaches the people who need it.</p>
       <div class="btns">
         <a class="btn" href="https://github.com/amit-kamlapure/pramanyx" target="_blank" rel="noopener">View on GitHub ↗</a>
         <a class="btn ghost" href="https://amit-kamlapure.github.io/pramanyx/how-it-works.html" target="_blank" rel="noopener">How it works ↗</a>
